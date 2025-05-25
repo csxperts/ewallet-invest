@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Withdraw from Wallet</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2em;
+      max-width: 400px;
+    }
+    label {
+      display: block;
+      margin-top: 1em;
+    }
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 0.5em;
+      font-size: 1em;
+    }
+    button {
+      margin-top: 1.5em;
+      padding: 0.7em;
+      width: 100%;
+      font-size: 1.1em;
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:disabled {
+      background-color: #cccccc;
+    }
+    #message {
+      margin-top: 1em;
+      font-weight: bold;
+    }
+    #message.success {
+      color: green;
+    }
+    #message.error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h2>Withdraw from Wallet</h2>
+  <form id="withdrawForm">
+    <label for="userId">User ID</label>
+    <input type="text" id="userId" name="userId" placeholder="Enter your user ID" required />
+
+    <label for="amount">Amount (PKR)</label>
+    <input type="number" id="amount" name="amount" placeholder="Enter amount to withdraw" min="1" required />
+
+    <label for="mobileNumber">JazzCash Mobile Number</label>
+    <input type="text" id="mobileNumber" name="mobileNumber" placeholder="e.g. 03001234567" pattern="03[0-9]{9}" required />
+
+    <button type="submit">Withdraw</button>
+  </form>
+
+  <div id="message"></div>
+
+  <script>
+    const form = document.getElementById('withdrawForm');
+    const messageDiv = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      messageDiv.textContent = '';
+      messageDiv.className = '';
+
+      const userId = form.userId.value.trim();
+      const amount = form.amount.value.trim();
+      const mobileNumber = form.mobileNumber.value.trim();
+
+      if (!userId || !amount || !mobileNumber) {
+        messageDiv.textContent = 'Please fill all the fields.';
+        messageDiv.className = 'error';
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/withdraw', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ userId, amount, mobileNumber })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          messageDiv.textContent = 'Withdrawal successful!';
+          messageDiv.className = 'success';
+          form.reset();
+        } else {
+          messageDiv.textContent = data.message || 'Withdrawal failed.';
+          messageDiv.className = 'error';
+        }
+      } catch (error) {
+        messageDiv.textContent = 'An error occurred, please try again later.';
+        messageDiv.className = 'error';
+      }
+    });
+  </script>
+</body>
+</html>
