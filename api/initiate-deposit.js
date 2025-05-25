@@ -4,7 +4,7 @@ const JAZZCASH_CONFIG = {
   merchantId: "MC151327",
   password: "5gzt1t7153",
   integritySalt: "xtsux45vw4",
-  returnUrl: "http://invest.ewallet.pk/jazzcash-response.html",
+  returnUrl: "https://invest.ewallet.pk/jazzcash-response.html",
   endpoint: "https://sandbox.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/"
 };
 
