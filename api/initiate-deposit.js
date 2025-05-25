@@ -8,8 +8,9 @@ const JAZZCASH_CONFIG = {
   endpoint: "https://payments.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/"
 };
 
-function getTxnDateTime() {
+function getTxnExpiryDateTime() {
   const now = new Date();
+  now.setHours(now.getHours() + 1);
   return now.toISOString().replace(/[-:T.Z]/g, '').slice(0, 14);
 }
 
@@ -36,7 +37,7 @@ export default async function handler(req, res) {
 
   const txnRefNo = 'T' + Date.now();
   const txnDateTime = getTxnDateTime();
-  const expiryDateTime = getTxnDateTime(); // Add +1hr if needed
+  const expiryDateTime = getTxnExpiryDateTime(); // Add +1hr if needed
 
   const pp_Amount = parseInt(amount) * 100;
 
