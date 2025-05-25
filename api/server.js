@@ -33,7 +33,7 @@ function generateSecureHash(data) {
 }
 
 // Route: Initiate Deposit
-app.post('/api/initiate-deposit', async (req, res) => {
+app.post('/api/server', async (req, res) => {
   const { amount, account, cnic } = req.body;
 
   if (!amount || !account || !cnic) {
