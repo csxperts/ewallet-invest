@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JazzCash Deposit</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background-color: #f4f4f4;
+    }
+    form {
+      max-width: 400px;
+      margin: auto;
+      padding: 25px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin: 12px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    label {
+      display: block;
+      margin: 10px 0;
+    }
+    button {
+      background-color: #ec1f27;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #c71a21;
+    }
+    .error {
+      color: red;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <form id="depositForm">
+    <h2>JazzCash Deposit</h2>
+
+    <label for="amount">Enter Amount (PKR):</label>
+    <input type="number" id="amount" name="amount" required min="10" />
+
+    <label for="account">JazzCash Mobile Account Number:</label>
+    <input type="text" id="account" name="account" pattern="03[0-9]{9}" required placeholder="03XXXXXXXXX"/>
+
+    <label for="cnic">CNIC Number:</label>
+    <input type="text" id="cnic" name="cnic" pattern="[0-9]{13}" required placeholder="Without dashes, e.g. 3520112345671"/>
+
+    <label>
+      <input type="checkbox" id="terms" required />
+      I agree to the Terms & Conditions
+    </label>
+
+    <button type="submit">Deposit</button>
+
+    <p class="error" id="errorMsg"></p>
+  </form>
+
+  <script>
+    document.getElementById('depositForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const amount = document.getElementById('amount').value;
+      const account = document.getElementById('account').value;
+      const cnic = document.getElementById('cnic').value;
+      const terms = document.getElementById('terms').checked;
+      const errorMsg = document.getElementById('errorMsg');
+
+      errorMsg.textContent = "";
+
+      if (!terms) {
+        errorMsg.textContent = "You must agree to the Terms & Conditions.";
+        return;
+      }
+
+      const data = {
+        amount,
+        account,
+        cnic
+      };
+
+      try {
+        const response = await fetch('/api/initiate-deposit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (result.success && result.redirectUrl) {
+          // Redirect to JazzCash payment page
+          window.location.href = result.redirectUrl;
+        } else {
+          errorMsg.textContent = result.message || "An error occurred.";
+        }
+      } catch (error) {
+        console.error(error);
+        errorMsg.textContent = "Failed to process deposit.";
+      }
+    });
+  </script>
+
+</body>
+</html>
