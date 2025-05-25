@@ -8,10 +8,10 @@ const PORT = 3000;
 
 // JazzCash Configuration (Sandbox or Live)
 const JAZZCASH_CONFIG = {
-  merchantId: "MC12345", // Replace with your Merchant ID
-  password: "123456",     // API password
-  integritySalt: "YourIntegritySalt", // Provided by JazzCash
-  returnUrl: "https://yourdomain.com/payment-response", // Where user returns after payment
+  merchantId: "MC151327", // Replace with your Merchant ID
+  password: "5gzt1t7153",     // API password
+  integritySalt: "xtsux45vw4", // Provided by JazzCash
+  returnUrl: "http://invest.ewallet.pk/jazzcash-response.html", // Where user returns after payment
   endpoint: "https://sandbox.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/" // Use live URL for production
 };
 
