@@ -76,6 +76,7 @@
   <script>
     document.getElementById('depositForm').addEventListener('submit', async function (e) {
       e.preventDefault();
+
       const amount = document.getElementById('amount').value;
       const account = document.getElementById('account').value;
       const cnic = document.getElementById('cnic').value;
@@ -89,29 +90,37 @@
         return;
       }
 
-      const data = {
-        amount,
-        account,
-        cnic
-      };
+      const data = { amount, account, cnic };
 
       try {
         const response = await fetch('/api/initiate-deposit', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
         });
 
         const result = await response.json();
 
-        if (result.success && result.redirectUrl) {
-          // Redirect to JazzCash payment page
-          window.location.href = result.redirectUrl;
+        if (result.success && result.redirectUrl && result.formData) {
+          // Create form and submit to JazzCash endpoint
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = result.redirectUrl;
+
+          for (const key in result.formData) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = result.formData[key];
+            form.appendChild(input);
+          }
+
+          document.body.appendChild(form);
+          form.submit();
         } else {
           errorMsg.textContent = result.message || "An error occurred.";
         }
+
       } catch (error) {
         console.error(error);
         errorMsg.textContent = "Failed to process deposit.";
