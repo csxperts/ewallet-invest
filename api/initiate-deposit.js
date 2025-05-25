@@ -5,7 +5,7 @@ const JAZZCASH_CONFIG = {
   password: "5gzt1t7153",
   integritySalt: "xtsux45vw4",
   returnUrl: "https://invest.ewallet.pk/jazzcash-response.html",
-  endpoint: "https://sandbox.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/"
+  endpoint: "https://payments.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/"
 };
 
 function getTxnDateTime() {
