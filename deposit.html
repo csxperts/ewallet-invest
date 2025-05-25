@@ -86,11 +86,13 @@
       errorMsg.textContent = "";
 
       if (!terms) {
+        console.log("Terms not agreed");
         errorMsg.textContent = "You must agree to the Terms & Conditions.";
         return;
       }
 
       const data = { amount, account, cnic };
+      console.log("Submitting deposit data:", data);
 
       try {
         const response = await fetch('/api/initiate-deposit', {
@@ -99,9 +101,20 @@
           body: JSON.stringify(data)
         });
 
+        console.log("Response received from /api/initiate-deposit");
+
+        if (!response.ok) {
+          console.error("Network response was not ok:", response.statusText);
+          errorMsg.textContent = "Network error: " + response.statusText;
+          return;
+        }
+
         const result = await response.json();
+        console.log("Response JSON:", result);
 
         if (result.success && result.redirectUrl && result.formData) {
+          console.log("Preparing to redirect to JazzCash with form data", result.formData);
+
           // Create form and submit to JazzCash endpoint
           const form = document.createElement('form');
           form.method = 'POST';
@@ -116,13 +129,16 @@
           }
 
           document.body.appendChild(form);
+
+          console.log("Submitting form to JazzCash...");
           form.submit();
         } else {
+          console.warn("Deposit initiation failed:", result.message || "Unknown error");
           errorMsg.textContent = result.message || "An error occurred.";
         }
 
       } catch (error) {
-        console.error(error);
+        console.error("Error during fetch:", error);
         errorMsg.textContent = "Failed to process deposit.";
       }
     });
